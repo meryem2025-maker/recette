@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F7F2; --card:#FFFFFF; --ink:#1E2A22; --soft:#5B6A60; --line:#D9E0D5;
+  --beet:#A3213F; --beet-ink:#FFFFFF; --leaf:#2F6B45; --lemon:#F0CF65;
+  --t-matin:#F6DFA3; --t-plat:#F3C9C0; --t-soupe:#CFE3C6; --t-dessert:#E2D2EE;
+  --display:'Bricolage Grotesque',system-ui,sans-serif; --body:'Newsreader',Georgia,serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141B16; --card:#1C261F; --ink:#EAF0E8; --soft:#9DAEA2; --line:#2C3A30;
+    --beet:#E5607D; --beet-ink:#1A0A0E; --leaf:#7FC397; --lemon:#E9C46A;
+    --t-matin:#5B4C1E; --t-plat:#5C2E2A; --t-soupe:#2D4A33; --t-dessert:#46345A;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141B16; --card:#1C261F; --ink:#EAF0E8; --soft:#9DAEA2; --line:#2C3A30;
+  --beet:#E5607D; --beet-ink:#1A0A0E; --leaf:#7FC397; --lemon:#E9C46A;
+  --t-matin:#5B4C1E; --t-plat:#5C2E2A; --t-soupe:#2D4A33; --t-dessert:#46345A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.6}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.logo{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em;cursor:pointer;background:none;border:0;color:var(--ink);padding:0}
+.logo span{color:var(--beet)}
+button{font:inherit;color:inherit}
+.btn{font-family:var(--display);font-weight:700;font-size:15px;border:0;border-radius:999px;padding:10px 18px;cursor:pointer;background:var(--beet);color:var(--beet-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.row:focus-visible,.logo:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,7vw,60px);line-height:1.02;letter-spacing:-.03em;margin:28px 0 20px;max-width:14ch}
+.lede{font-size:20px;color:var(--soft);margin:-6px 0 18px;font-style:italic}
+.search{width:100%;font:inherit;font-size:19px;padding:16px 20px;border-radius:14px;border:2px solid var(--ink);background:var(--card);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px}
+.chip{font-family:var(--display);font-weight:500;font-size:15px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:transparent;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.count{color:var(--soft);font-style:italic;margin:6px 0 14px}
+.list{border-top:1.5px solid var(--ink)}
+.row{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 4px;cursor:pointer}
+.row:hover .rname{color:var(--beet)}
+.tile{width:64px;height:64px;border-radius:18px 18px 18px 6px;display:grid;place-items:center;font-size:32px}
+.rname{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.15;letter-spacing:-.01em}
+.rmeta{color:var(--soft);font-size:16px}
+.rcat{font-size:15px;color:var(--soft);text-align:right}
+.empty{padding:36px 4px;color:var(--soft)}
+/* détail */
+.back{margin:8px 0 12px}
+.hero{display:flex;gap:18px;align-items:center;margin-bottom:6px}
+.hero .tile{width:84px;height:84px;font-size:44px;flex:none}
+.hero h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,44px);line-height:1.05;letter-spacing:-.02em;margin:0}
+.facts{color:var(--soft);margin:6px 0 24px}
+.cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:36px}
+@media (max-width:720px){.cols{grid-template-columns:1fr;gap:24px}.row{grid-template-columns:52px 1fr}.rcat{display:none}.tile{width:52px;height:52px;font-size:26px}}
+h3{font-family:var(--display);font-weight:700;font-size:20px;margin:0 0 10px}
+.stepper{display:inline-flex;align-items:center;gap:10px;margin-bottom:12px;font-family:var(--display);font-weight:500}
+.stepper button{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--ink);background:var(--card);cursor:pointer;font-size:20px;line-height:1}
+.stepper button:focus-visible{outline:3px solid var(--lemon);outline-offset:2px}
+ul.ing{list-style:none;padding:0;margin:0}
+ul.ing li{padding:7px 0;border-bottom:1px solid var(--line)}
+ul.ing b{font-family:var(--display);font-weight:700}
+ol.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 18px 44px;cursor:pointer}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:30px;height:30px;border-radius:50%;background:var(--lemon);color:#2a2410;font-family:var(--display);font-weight:800;font-size:15px;display:grid;place-items:center}
+ol.steps li.done{color:var(--soft);text-decoration:line-through}
+ol.steps li.done::before{background:var(--leaf);color:#fff;content:"✓"}
+/* formulaire */
+.form{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px;margin-top:10px}
+.form label{display:block;font-family:var(--display);font-weight:700;font-size:15px;margin:14px 0 4px}
+.form input,.form textarea,.form select{width:100%;font:inherit;font-size:17px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink)}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form .actions{display:flex;gap:10px;margin-top:20px}
+.hint{color:var(--soft);font-size:15px;margin:2px 0 0}
+footer{padding:40px 0 30px;color:var(--soft);font-size:15px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <button class="logo" id="home" aria-label="Retour à l'accueil">Rec<span>ette</span></button>
+    <button class="btn" id="addBtn">Ajouter une recette</button>
+  </header>
+
+  <main>
+    <section id="viewList">
+      <h1>Qu'est-ce qu'on cuisine aujourd'hui ?</h1>
+      <p class="lede">Des recettes marocaines, italiennes et du monde entier.</p>
+      <input id="q" class="search" type="search" placeholder="Un plat ou un ingrédient : citron, œufs, chocolat…" aria-label="Rechercher une recette">
+      <div class="chips" id="chips" role="group" aria-label="Types de plats"></div>
+      <div class="chips" id="pchips" role="group" aria-label="Pays"></div>
+      <p class="count" id="count"></p>
+      <div class="list" id="list"></div>
+    </section>
+
+    <section id="viewDetail" class="hidden"></section>
+
+    <section id="viewForm" class="hidden">
+      <button class="btn ghost back" id="formBack">Retour</button>
+      <h2 style="font-family:var(--display);font-weight:800;font-size:32px;margin:6px 0">Ajouter une recette</h2>
+      <div class="form">
+        <label for="fName">Nom du plat</label>
+        <input id="fName" placeholder="Ex. : Cake au citron">
+        <div class="two">
+          <div><label for="fCat">Catégorie</label>
+            <select id="fCat"><option>Petit-déjeuner</option><option selected>Plat</option><option>Soupe &amp; salade</option><option>Dessert</option><option>Boisson</option></select></div>
+          <div><label for="fTime">Temps total (min)</label><input id="fTime" type="number" min="1" value="30"></div>
+        </div>
+        <label for="fPays">Pays d'origine</label>
+        <input id="fPays" list="paysL" placeholder="Ex. : Maroc">
+        <datalist id="paysL"><option value="Maroc"><option value="Italie"><option value="France"><option value="Espagne"><option value="Grèce"><option value="Liban"><option value="Turquie"><option value="Inde"><option value="Japon"><option value="Chine"><option value="Thaïlande"><option value="Mexique"><option value="États-Unis"></datalist>
+        <label for="fIng">Ingrédients</label>
+        <textarea id="fIng" rows="5" placeholder="Un ingrédient par ligne&#10;200 g de farine&#10;3 œufs"></textarea>
+        <label for="fSteps">Étapes</label>
+        <textarea id="fSteps" rows="5" placeholder="Une étape par ligne"></textarea>
+        <p class="hint" id="formErr" role="alert"></p>
+        <div class="actions"><button class="btn" id="save">Enregistrer la recette</button><button class="btn ghost" id="cancel">Annuler</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Les recettes ajoutées sont gardées dans ce navigateur uniquement.</footer>
+</div>
+
+<script>
+const BASE = [
+ {id:'tajine-poulet',pays:'Maroc',name:'Tajine de poulet aux olives et citron confit',emoji:'🍗',cat:'Plat',time:90,level:'Moyen',veg:false,servings:4,
+  ing:[[1,'','poulet fermier (environ 1,5 kg), découpé'],[2,'','oignons émincés'],[3,'','gousses d\'ail écrasées'],[1,'','citron confit'],[150,'g','d\'olives vertes'],[3,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de gingembre moulu'],[1,'c. à café','de curcuma'],[1,'pincée','de safran'],[1,'poignée','de coriandre et de persil frais']],
+  steps:['Mélangez dans le tajine (ou une cocotte) l\'huile, l\'ail, les oignons, le gingembre, le curcuma, le safran, le sel et le poivre. Ajoutez les morceaux de poulet et enrobez-les bien.','Versez un verre d\'eau, couvrez et laissez mijoter 45 minutes à feu doux.','Ajoutez les olives rincées, le citron confit coupé en quartiers (sans la pulpe) et la moitié des herbes ciselées.','Poursuivez 20 à 25 minutes, jusqu\'à ce que la sauce soit courte et onctueuse. Servez avec du pain et le reste des herbes.']},
+ {id:'couscous',pays:'Maroc',name:'Couscous aux légumes et à la viande',emoji:'🍲',cat:'Plat',time:120,level:'Moyen',veg:false,servings:6,
+  ing:[[500,'g','de semoule de couscous moyenne'],[800,'g','d\'agneau ou de poulet'],[2,'','oignons'],[4,'','carottes'],[3,'','navets'],[3,'','courgettes'],[300,'g','de potiron'],[200,'g','de pois chiches cuits'],[2,'','tomates'],[2,'c. à café','de ras el hanout'],[1,'c. à café','de curcuma'],[60,'g','de beurre ou de smen'],[3,'c. à soupe','d\'huile']],
+  steps:['Dans le bas du couscoussier, faites revenir la viande avec les oignons, l\'huile, le ras el hanout, le curcuma, le sel et le poivre. Couvrez largement d\'eau et portez à ébullition.','Ajoutez les carottes et les navets, puis laissez cuire 40 minutes.','Pendant ce temps, humidifiez la semoule avec un peu d\'eau salée, égrenez-la avec les doigts et huilez-la. Faites-la cuire à la vapeur dans le haut du couscoussier, deux fois 15 minutes, en l\'égrenant entre les deux passages.','Ajoutez les courgettes, le potiron, les tomates et les pois chiches au bouillon, et cuisez encore 20 minutes.','Mélangez la semoule avec le beurre, dressez-la en dôme, puis disposez la viande et les légumes dessus. Servez le bouillon à part.']},
+ {id:'harira',pays:'Maroc',name:'Harira',emoji:'🥣',cat:'Soupe & salade',time:90,level:'Moyen',veg:false,servings:6,
+  ing:[[200,'g','d\'agneau en petits morceaux'],[100,'g','de lentilles'],[100,'g','de pois chiches cuits'],[500,'g','de tomates mûres mixées'],[1,'','oignon'],[2,'','branches de céleri'],[1,'bouquet','de coriandre et de persil'],[50,'g','de vermicelles'],[2,'c. à soupe','de farine'],[1,'c. à café','de gingembre'],[1,'c. à café','de curcuma'],[1,'c. à café','de cannelle']],
+  steps:['Dans une grande marmite, mettez la viande, l\'oignon râpé, le céleri, les épices, le sel et le poivre, avec 2 litres d\'eau. Portez à ébullition.','Ajoutez les lentilles et les pois chiches, puis les tomates mixées. Laissez cuire 45 minutes.','Délayez la farine dans un verre d\'eau froide et versez-la dans la soupe en remuant pour l\'épaissir.','Ajoutez les herbes ciselées et les vermicelles, et laissez cuire encore 10 minutes. Servez avec des dattes et un citron.']},
+ {id:'zaalouk',pays:'Maroc',name:'Zaalouk d\'aubergines',emoji:'🍆',cat:'Soupe & salade',time:40,level:'Facile',veg:true,servings:4,
+  ing:[[3,'','aubergines'],[4,'','tomates mûres'],[3,'','gousses d\'ail'],[4,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de cumin'],[1,'c. à café','de paprika'],[1,'poignée','de coriandre et de persil'],[1,'','citron (jus)']],
+  steps:['Épluchez les aubergines, coupez-les en cubes et faites-les cuire à la vapeur ou dans l\'eau bouillante 15 minutes. Égouttez-les bien.','Faites revenir l\'ail dans l\'huile, puis ajoutez les tomates pelées et coupées, le cumin et le paprika.','Quand les tomates ont fondu, ajoutez les aubergines et écrasez-les à la fourchette.','Laissez réduire 15 minutes à feu doux. Ajoutez les herbes et le citron, et servez tiède ou froid avec du pain.']},
+ {id:'msemen',pays:'Maroc',name:'Msemen (crêpes feuilletées)',emoji:'🫓',cat:'Petit-déjeuner',time:60,level:'Moyen',veg:true,servings:6,
+  ing:[[350,'g','de farine'],[150,'g','de semoule fine'],[1,'c. à café','de sel'],[1,'c. à café','de sucre'],[25,'cl','d\'eau tiède (environ)'],[60,'g','de beurre fondu'],[4,'c. à soupe','d\'huile']],
+  steps:['Mélangez la farine, la semoule, le sel et le sucre. Ajoutez l\'eau peu à peu et pétrissez 10 minutes jusqu\'à obtenir une pâte souple.','Formez des boules de la taille d\'une mandarine et laissez-les reposer 15 minutes sous un linge.','Huilez le plan de travail, étalez une boule en carré très fin, badigeonnez de beurre fondu et pliez en carré en rabattant les quatre côtés.','Étalez légèrement chaque carré et faites-le cuire dans une poêle chaude, 2 minutes par face. Servez avec du miel ou du fromage.']},
+ {id:'kefta',pays:'Maroc',name:'Tajine de kefta aux œufs',emoji:'🍳',cat:'Plat',time:45,level:'Facile',veg:false,servings:4,
+  ing:[[500,'g','de viande hachée (bœuf ou agneau)'],[1,'','oignon râpé'],[1,'poignée','de persil et de coriandre'],[1,'c. à café','de cumin'],[1,'c. à café','de paprika'],[800,'g','de tomates pelées'],[2,'','gousses d\'ail'],[4,'','œufs'],[2,'c. à soupe','d\'huile d\'olive']],
+  steps:['Mélangez la viande avec l\'oignon, les herbes hachées, la moitié des épices, le sel et le poivre. Formez de petites boulettes.','Faites revenir l\'ail dans l\'huile, ajoutez les tomates et le reste des épices, et laissez mijoter 10 minutes.','Déposez les boulettes dans la sauce et cuisez à couvert 15 minutes.','Cassez les œufs sur les boulettes, couvrez et laissez cuire 5 minutes. Servez dans le plat avec du pain.']},
+ {id:'bissara',pays:'Maroc',name:'Bissara (soupe de fèves)',emoji:'🥣',cat:'Soupe & salade',time:60,level:'Facile',veg:true,servings:4,
+  ing:[[300,'g','de fèves sèches décortiquées'],[4,'','gousses d\'ail'],[1.2,'l','d\'eau'],[4,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de cumin'],[1,'c. à café','de paprika'],[1,'','citron']],
+  steps:['Rincez les fèves et faites-les tremper 2 à 3 heures.','Faites-les cuire avec l\'ail et l\'eau 40 minutes, jusqu\'à ce qu\'elles soient très tendres.','Mixez avec un peu de sel jusqu\'à obtenir une soupe épaisse et lisse.','Servez chaud, avec un filet d\'huile d\'olive, du cumin, du paprika et un jus de citron.']},
+ {id:'the-menthe',pays:'Maroc',name:'Thé à la menthe',emoji:'🍵',cat:'Boisson',time:10,level:'Facile',veg:true,servings:4,
+  ing:[[1,'c. à soupe','de thé vert (gunpowder)'],[1,'grosse poignée','de menthe fraîche'],[4,'c. à soupe','de sucre (selon le goût)'],[1,'l','d\'eau bouillante']],
+  steps:['Rincez le thé avec un peu d\'eau bouillante dans la théière, puis jetez cette première eau.','Ajoutez la menthe, le sucre et l\'eau bouillante. Laissez infuser 5 minutes.','Versez un verre, reversez-le dans la théière, et répétez deux fois pour bien mélanger.','Servez en versant de haut pour faire mousser le thé.']},
+ {id:'lasagnes',pays:'Italie',name:'Lasagnes à la bolognaise',emoji:'🍝',cat:'Plat',time:120,level:'Moyen',veg:false,servings:6,
+  ing:[[250,'g','de feuilles de lasagnes'],[500,'g','de viande de bœuf hachée'],[700,'g','de sauce tomate'],[1,'','oignon'],[1,'','carotte'],[75,'cl','de lait'],[60,'g','de beurre'],[60,'g','de farine'],[80,'g','de parmesan râpé'],[1,'pincée','de muscade']],
+  steps:['Faites revenir l\'oignon et la carotte en petits dés, ajoutez la viande, puis la sauce tomate. Laissez mijoter 30 minutes.','Préparez la béchamel : faites fondre le beurre, ajoutez la farine, puis le lait peu à peu en fouettant. Assaisonnez avec le sel, le poivre et la muscade.','Préchauffez le four à 180 °C. Dans un plat, alternez sauce, feuilles de lasagnes et béchamel, en terminant par la béchamel.','Parsemez de parmesan et enfournez 35 à 40 minutes. Laissez reposer 10 minutes avant de servir.']},
+ {id:'risotto',pays:'Italie',name:'Risotto aux champignons',emoji:'🍄',cat:'Plat',time:40,level:'Moyen',veg:true,servings:4,
+  ing:[[320,'g','de riz arborio ou carnaroli'],[300,'g','de champignons de Paris'],[1,'','oignon'],[10,'cl','de vin blanc sec'],[1,'l','de bouillon de légumes chaud'],[60,'g','de parmesan râpé'],[30,'g','de beurre'],[2,'c. à soupe','d\'huile d\'olive']],
+  steps:['Faites revenir l\'oignon haché dans l\'huile, puis ajoutez les champignons émincés et cuisez 5 minutes. Réservez-en la moitié.','Ajoutez le riz et faites-le nacrer 2 minutes, puis versez le vin et laissez-le s\'évaporer.','Versez le bouillon louche par louche en remuant, en attendant que chaque louche soit absorbée. Comptez 18 minutes.','Hors du feu, ajoutez le beurre et le parmesan, mélangez énergiquement. Servez avec les champignons réservés.']},
+ {id:'pizza',pays:'Italie',name:'Pizza margherita',emoji:'🍕',cat:'Plat',time:100,level:'Moyen',veg:true,servings:4,
+  ing:[[500,'g','de farine'],[30,'cl','d\'eau tiède'],[7,'g','de levure boulangère sèche'],[2,'c. à café','de sel'],[2,'c. à soupe','d\'huile d\'olive'],[300,'g','de sauce tomate'],[250,'g','de mozzarella'],[1,'poignée','de basilic frais']],
+  steps:['Mélangez la farine, la levure et le sel. Ajoutez l\'eau et l\'huile, puis pétrissez 10 minutes.','Laissez lever la pâte 1 heure sous un linge, jusqu\'à ce qu\'elle double de volume.','Préchauffez le four à sa température maximale (250 °C). Étalez la pâte en deux disques fins.','Garnissez de sauce tomate et de mozzarella en morceaux. Enfournez 10 à 12 minutes, puis ajoutez le basilic à la sortie du four.']},
+ {id:'tiramisu',pays:'Italie',name:'Tiramisu',emoji:'☕',cat:'Dessert',time:30,level:'Moyen',veg:true,servings:6,
+  ing:[[500,'g','de mascarpone'],[4,'','œufs'],[100,'g','de sucre'],[25,'cl','de café fort refroidi'],[24,'','biscuits à la cuillère'],[2,'c. à soupe','de cacao amer']],
+  steps:['Séparez les blancs des jaunes. Fouettez les jaunes avec le sucre jusqu\'à ce que le mélange blanchisse, puis incorporez le mascarpone.','Montez les blancs en neige ferme et incorporez-les délicatement à la crème.','Trempez rapidement les biscuits dans le café et disposez-en une couche dans un plat. Couvrez de crème, puis répétez une seconde couche.','Placez au moins 6 heures au frais, puis saupoudrez de cacao avant de servir.']},
+ {id:'panna-cotta',pays:'Italie',name:'Panna cotta',emoji:'🍮',cat:'Dessert',time:20,level:'Facile',veg:true,servings:4,
+  ing:[[50,'cl','de crème liquide entière'],[60,'g','de sucre'],[3,'','feuilles de gélatine'],[1,'','gousse de vanille'],[100,'g','de coulis de fruits rouges']],
+  steps:['Faites ramollir la gélatine 10 minutes dans de l\'eau froide.','Chauffez la crème avec le sucre et la vanille fendue, sans la faire bouillir.','Hors du feu, ajoutez la gélatine essorée et mélangez jusqu\'à dissolution.','Versez dans des verrines, laissez refroidir puis placez 4 heures au frais. Servez avec le coulis.']},
+ {id:'bruschetta',pays:'Italie',name:'Bruschetta à la tomate',emoji:'🍅',cat:'Soupe & salade',time:15,level:'Facile',veg:true,servings:4,
+  ing:[[8,'','tranches de pain de campagne'],[4,'','tomates mûres'],[1,'','gousse d\'ail'],[3,'c. à soupe','d\'huile d\'olive'],[1,'poignée','de basilic frais'],[1,'c. à café','de vinaigre balsamique']],
+  steps:['Faites griller les tranches de pain, puis frottez-les avec la gousse d\'ail.','Coupez les tomates en petits dés et mélangez-les avec le basilic, l\'huile, le vinaigre, le sel et le poivre.','Garnissez le pain juste avant de servir.']},
+ {id:'miso',pays:'Japon',name:'Soupe miso au tofu',emoji:'🍜',cat:'Soupe & salade',time:15,level:'Facile',veg:true,servings:4,
+  ing:[[1,'l','de bouillon dashi (ou d\'eau)'],[3,'c. à soupe','de pâte de miso'],[200,'g','de tofu ferme'],[1,'c. à soupe','d\'algues wakamé séchées'],[2,'','oignons nouveaux']],
+  steps:['Faites chauffer le bouillon sans le laisser bouillir. Réhydratez les algues dans un bol d\'eau 5 minutes.','Ajoutez le tofu coupé en dés et les algues égouttées, puis laissez chauffer 2 minutes.','Délayez le miso avec une louche de bouillon et versez-le dans la casserole, hors du feu.','Servez avec les oignons nouveaux ciselés.']},
+ {id:'teriyaki',pays:'Japon',name:'Poulet teriyaki',emoji:'🍱',cat:'Plat',time:30,level:'Facile',veg:false,servings:4,
+  ing:[[600,'g','de cuisses de poulet désossées'],[5,'c. à soupe','de sauce soja'],[4,'c. à soupe','de mirin'],[2,'c. à soupe','de sucre'],[1,'c. à café','de gingembre râpé'],[1,'c. à soupe','d\'huile'],[250,'g','de riz à sushi']],
+  steps:['Mélangez la sauce soja, le mirin, le sucre et le gingembre.','Faites dorer le poulet côté peau dans l\'huile, 5 minutes par côté.','Versez la sauce et laissez réduire à feu moyen 8 minutes, en arrosant le poulet, jusqu\'à ce qu\'elle devienne sirupeuse.','Découpez le poulet en tranches et servez-le sur du riz cuit.']},
+ {id:'guacamole',pays:'Mexique',name:'Guacamole',emoji:'🥑',cat:'Soupe & salade',time:10,level:'Facile',veg:true,servings:4,
+  ing:[[3,'','avocats mûrs'],[1,'','citron vert (jus)'],[1,'','tomate'],[0.5,'','oignon rouge'],[1,'poignée','de coriandre'],[1,'','piment (facultatif)']],
+  steps:['Écrasez les avocats à la fourchette avec le jus de citron vert.','Ajoutez la tomate épépinée en dés, l\'oignon haché finement, la coriandre et le piment.','Salez, mélangez et servez aussitôt avec des chips de maïs.']},
+ {id:'tacos',pays:'Mexique',name:'Tacos au poulet',emoji:'🌮',cat:'Plat',time:30,level:'Facile',veg:false,servings:4,
+  ing:[[500,'g','de blanc de poulet'],[8,'','tortillas de maïs ou de blé'],[1,'c. à café','de cumin'],[1,'c. à café','de paprika fumé'],[1,'','oignon rouge'],[2,'','citrons verts'],[10,'cl','de crème fraîche'],[1,'poignée','de coriandre']],
+  steps:['Coupez le poulet en lamelles et faites-le mariner avec le cumin, le paprika, le sel et le jus d\'un citron vert.','Faites-le sauter à la poêle 8 minutes.','Faites chauffer les tortillas à sec, 30 secondes de chaque côté.','Garnissez de poulet, d\'oignon émincé, de crème et de coriandre, avec des quartiers de citron vert.']},
+ {id:'dal',pays:'Inde',name:'Dal de lentilles corail',emoji:'🍛',cat:'Plat',time:35,level:'Facile',veg:true,servings:4,
+  ing:[[250,'g','de lentilles corail'],[1,'','oignon'],[2,'','tomates'],[3,'','gousses d\'ail'],[20,'cl','de lait de coco'],[1,'c. à café','de curcuma'],[1,'c. à café','de cumin'],[1,'c. à café','de garam masala'],[1,'c. à soupe','d\'huile']],
+  steps:['Faites revenir l\'oignon, l\'ail et le cumin dans l\'huile.','Ajoutez les tomates en dés, le curcuma, le garam masala et les lentilles rincées.','Couvrez avec 60 cl d\'eau et laissez cuire 20 minutes en remuant de temps en temps.','Ajoutez le lait de coco, salez et servez avec du riz ou du pain naan.']},
+ {id:'salade-grecque',pays:'Grèce',name:'Salade grecque',emoji:'🥗',cat:'Soupe & salade',time:10,level:'Facile',veg:true,servings:4,
+  ing:[[4,'','tomates'],[1,'','concombre'],[1,'','oignon rouge'],[200,'g','de feta'],[100,'g','d\'olives noires'],[4,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','d\'origan séché']],
+  steps:['Coupez les tomates en quartiers, le concombre en rondelles et l\'oignon en fines lamelles.','Disposez-les dans un plat avec les olives, puis posez la feta en un seul bloc.','Arrosez d\'huile d\'olive, saupoudrez d\'origan et de poivre.']},
+ {id:'taboule',pays:'Liban',name:'Taboulé libanais',emoji:'🌿',cat:'Soupe & salade',time:25,level:'Facile',veg:true,servings:4,
+  ing:[[3,'bouquets','de persil plat'],[60,'g','de boulgour fin'],[4,'','tomates'],[3,'','oignons nouveaux'],[1,'poignée','de menthe fraîche'],[2,'','citrons (jus)'],[6,'c. à soupe','d\'huile d\'olive']],
+  steps:['Rincez le boulgour et laissez-le gonfler 15 minutes dans le jus des citrons.','Hachez très finement le persil, la menthe et les oignons nouveaux. Coupez les tomates en petits dés.','Mélangez le tout avec le boulgour et l\'huile d\'olive, salez et poivrez.','Servez frais, avec des feuilles de salade pour les rouler.']},
+ {id:'tortilla',pays:'Espagne',name:'Tortilla espagnole',emoji:'🥔',cat:'Plat',time:45,level:'Moyen',veg:true,servings:4,
+  ing:[[600,'g','de pommes de terre'],[6,'','œufs'],[1,'','oignon'],[15,'cl','d\'huile d\'olive']],
+  steps:['Épluchez les pommes de terre, coupez-les en fines tranches et émincez l\'oignon.','Faites-les cuire doucement dans l\'huile 15 minutes, sans trop les dorer. Égouttez-les.','Battez les œufs avec du sel et mélangez-les aux pommes de terre.','Versez dans une poêle huilée, cuisez 5 minutes, retournez à l\'aide d\'une assiette et poursuivez 4 minutes.']},
+ {id:'pad-thai',pays:'Thaïlande',name:'Pad thaï',emoji:'🍜',cat:'Plat',time:30,level:'Moyen',veg:false,servings:2,
+  ing:[[250,'g','de nouilles de riz'],[200,'g','de crevettes décortiquées'],[2,'','œufs'],[100,'g','de germes de soja'],[50,'g','de cacahuètes concassées'],[3,'c. à soupe','de sauce de poisson'],[2,'c. à soupe','de sucre'],[1,'','citron vert'],[2,'c. à soupe','d\'huile']],
+  steps:['Faites tremper les nouilles dans l\'eau chaude 10 minutes, puis égouttez-les.','Mélangez la sauce de poisson, le sucre et le jus du citron vert.','Faites sauter les crevettes dans l\'huile 2 minutes, ajoutez les œufs battus et brouillez-les.','Ajoutez les nouilles et la sauce, puis les germes de soja. Servez avec les cacahuètes.']},
+ {id:'pancakes',pays:'États-Unis',name:'Pancakes américains',emoji:'🥞',cat:'Petit-déjeuner',time:20,level:'Facile',veg:true,servings:4,
+  ing:[[200,'g','de farine'],[25,'cl','de lait'],[1,'','œuf'],[2,'c. à soupe','de sucre'],[1,'sachet','de levure chimique'],[30,'g','de beurre fondu']],
+  steps:['Mélangez la farine, le sucre et la levure.','Ajoutez l\'œuf, le lait et le beurre fondu, et mélangez sans trop travailler la pâte.','Faites cuire des petites louches dans une poêle chaude, jusqu\'à l\'apparition de bulles, puis retournez.','Servez avec du sirop d\'érable ou du miel.']},
+ {id:'cookies',pays:'États-Unis',name:'Cookies aux pépites de chocolat',emoji:'🍪',cat:'Dessert',time:25,level:'Facile',veg:true,servings:12,
+  ing:[[250,'g','de farine'],[125,'g','de beurre mou'],[150,'g','de sucre roux'],[1,'','œuf'],[150,'g','de pépites de chocolat'],[0.5,'c. à café','de levure chimique']],
+  steps:['Préchauffez le four à 180 °C.','Fouettez le beurre avec le sucre, ajoutez l\'œuf, puis la farine et la levure.','Incorporez les pépites de chocolat.','Déposez des boules de pâte espacées sur une plaque et enfournez 10 à 12 minutes. Laissez durcir avant de décoller.']},
+ {id:'crepes',pays:'France',name:'Crêpes maison',emoji:'🥞',cat:'Petit-déjeuner',time:30,level:'Facile',veg:true,servings:4,
+  ing:[[250,'g','de farine'],[3,'','œufs'],[50,'cl','de lait'],[1,'c. à soupe','de sucre'],[30,'g','de beurre fondu'],[1,'pincée','de sel']],
+  steps:['Mélangez la farine, le sucre et le sel dans un grand saladier, puis creusez un puits.','Ajoutez les œufs, puis versez le lait peu à peu en fouettant pour éviter les grumeaux.','Incorporez le beurre fondu. Laissez reposer la pâte 15 minutes.','Faites cuire une louche de pâte dans une poêle chaude, 1 minute de chaque côté.']},
+ {id:'omelette',pays:'France',name:'Omelette aux herbes',emoji:'🍳',cat:'Petit-déjeuner',time:10,level:'Facile',veg:true,servings:2,
+  ing:[[4,'','œufs'],[1,'c. à soupe','de ciboulette ciselée'],[1,'c. à soupe','de persil haché'],[10,'g','de beurre'],[1,'pincée','de sel et de poivre']],
+  steps:['Battez les œufs avec le sel, le poivre et les herbes.','Faites fondre le beurre dans une poêle à feu moyen.','Versez les œufs et ramenez les bords vers le centre pendant la cuisson.','Pliez l\'omelette en deux quand elle est encore un peu baveuse et servez aussitôt.']},
+ {id:'carbonara',pays:'Italie',name:'Spaghetti carbonara',emoji:'🍝',cat:'Plat',time:20,level:'Facile',veg:false,servings:4,
+  ing:[[400,'g','de spaghetti'],[150,'g','de lardons ou de guanciale'],[4,'','jaunes d\'œufs'],[1,'','œuf entier'],[80,'g','de parmesan ou pecorino râpé'],[1,'c. à café','de poivre noir']],
+  steps:['Faites cuire les pâtes dans une grande casserole d\'eau salée. Gardez un verre d\'eau de cuisson.','Faites dorer les lardons à sec dans une poêle, sans matière grasse.','Mélangez les jaunes, l\'œuf, le fromage et le poivre dans un bol.','Égouttez les pâtes, versez-les dans la poêle hors du feu, puis ajoutez le mélange aux œufs en remuant. Allongez avec un peu d\'eau de cuisson pour obtenir une sauce crémeuse.']},
+ {id:'poulet',pays:'France',name:'Poulet rôti au citron',emoji:'🍗',cat:'Plat',time:75,level:'Moyen',veg:false,servings:4,
+  ing:[[1,'','poulet entier (environ 1,5 kg)'],[2,'','citrons'],[4,'','gousses d\'ail'],[3,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de thym'],[1,'kg','de pommes de terre']],
+  steps:['Préchauffez le four à 200 °C.','Frottez le poulet avec l\'huile, le sel, le poivre et le thym. Glissez un demi-citron et l\'ail dans la cavité.','Disposez les pommes de terre coupées en quartiers autour du poulet, avec le reste du citron en rondelles.','Enfournez 1 h à 1 h 15. Arrosez avec le jus de cuisson à mi-parcours. Laissez reposer 10 minutes avant de découper.']},
+ {id:'gratin',pays:'France',name:'Gratin dauphinois',emoji:'🥔',cat:'Plat',time:90,level:'Facile',veg:true,servings:6,
+  ing:[[1.2,'kg','de pommes de terre'],[50,'cl','de crème liquide'],[25,'cl','de lait'],[2,'','gousses d\'ail'],[1,'pincée','de muscade'],[20,'g','de beurre']],
+  steps:['Préchauffez le four à 160 °C. Frottez un plat avec l\'ail et le beurre.','Épluchez et coupez les pommes de terre en fines rondelles, sans les rincer.','Disposez-les dans le plat, salez, poivrez, ajoutez la muscade.','Versez le lait et la crème mélangés. Enfournez 1 h 15 jusqu\'à ce que le dessus soit doré.']},
+ {id:'lentilles',pays:'Turquie',name:'Soupe de lentilles corail à la turque',emoji:'🍲',cat:'Soupe & salade',time:30,level:'Facile',veg:true,servings:4,
+  ing:[[250,'g','de lentilles corail'],[1,'','oignon'],[2,'','carottes'],[1,'l','de bouillon de légumes'],[1,'c. à café','de cumin'],[2,'c. à soupe','d\'huile d\'olive'],[1,'','citron (jus)']],
+  steps:['Faites revenir l\'oignon et les carottes en dés dans l\'huile pendant 5 minutes.','Ajoutez le cumin et les lentilles rincées, puis versez le bouillon.','Laissez cuire 20 minutes à frémissement, jusqu\'à ce que les lentilles soient fondantes.','Mixez selon la texture voulue et terminez par le jus de citron.']},
+ {id:'quinoa',pays:'Pérou',name:'Salade de quinoa croquante',emoji:'🥗',cat:'Soupe & salade',time:25,level:'Facile',veg:true,servings:2,
+  ing:[[150,'g','de quinoa'],[1,'','concombre'],[2,'','tomates'],[1,'','avocat'],[2,'c. à soupe','d\'huile d\'olive'],[1,'','citron (jus)'],[1,'poignée','de menthe fraîche']],
+  steps:['Rincez le quinoa et faites-le cuire 12 minutes dans deux fois son volume d\'eau salée. Laissez refroidir.','Coupez le concombre, les tomates et l\'avocat en dés.','Mélangez l\'huile et le jus de citron, puis assaisonnez.','Réunissez le tout, ajoutez la menthe ciselée et servez frais.']},
+ {id:'mousse',pays:'France',name:'Mousse au chocolat',emoji:'🍫',cat:'Dessert',time:30,level:'Moyen',veg:true,servings:6,
+  ing:[[200,'g','de chocolat noir'],[6,'','œufs'],[30,'g','de beurre'],[1,'pincée','de sel'],[2,'c. à soupe','de sucre']],
+  steps:['Faites fondre le chocolat avec le beurre au bain-marie, puis laissez tiédir.','Séparez les blancs des jaunes. Incorporez les jaunes un à un au chocolat.','Montez les blancs en neige ferme avec le sel, en ajoutant le sucre en fin de fouettage.','Incorporez délicatement les blancs au chocolat en trois fois. Répartissez dans des verrines et placez 3 heures au frais.']},
+ {id:'painperdu',pays:'France',name:'Pain perdu',emoji:'🍞',cat:'Petit-déjeuner',time:15,level:'Facile',veg:true,servings:4,
+  ing:[[8,'','tranches de pain rassis'],[3,'','œufs'],[30,'cl','de lait'],[2,'c. à soupe','de sucre'],[1,'c. à café','de cannelle'],[30,'g','de beurre']],
+  steps:['Battez les œufs avec le lait, le sucre et la cannelle dans une assiette creuse.','Trempez les tranches de pain 30 secondes de chaque côté.','Faites fondre le beurre dans une poêle et faites dorer les tranches 2 à 3 minutes par face.','Servez chaud avec du sucre, du miel ou des fruits.']},
+ {id:'quiche',pays:'France',name:'Quiche lorraine',emoji:'🥧',cat:'Plat',time:55,level:'Facile',veg:false,servings:6,
+  ing:[[1,'','pâte brisée'],[200,'g','de lardons'],[3,'','œufs'],[20,'cl','de crème fraîche'],[20,'cl','de lait'],[100,'g','de gruyère râpé'],[1,'pincée','de muscade']],
+  steps:['Préchauffez le four à 180 °C et foncez un moule avec la pâte.','Faites revenir les lardons à la poêle, puis égouttez-les sur du papier absorbant.','Battez les œufs avec la crème, le lait, la muscade, le sel et le poivre.','Répartissez les lardons et le fromage sur la pâte, versez l\'appareil et enfournez 35 minutes.']},
+ {id:'ratatouille',pays:'France',name:'Ratatouille',emoji:'🍆',cat:'Plat',time:60,level:'Facile',veg:true,servings:4,
+  ing:[[2,'','aubergines'],[3,'','courgettes'],[3,'','poivrons'],[4,'','tomates'],[2,'','oignons'],[3,'','gousses d\'ail'],[4,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de thym']],
+  steps:['Coupez tous les légumes en cubes de 2 cm.','Faites revenir les oignons et l\'ail dans l\'huile, puis ajoutez les aubergines et les poivrons.','Ajoutez les courgettes et les tomates, le thym, le sel et le poivre.','Laissez mijoter à couvert 40 minutes à feu doux, en remuant de temps en temps.']},
+ {id:'curry',pays:'Inde',name:'Curry de poulet au lait de coco',emoji:'🍛',cat:'Plat',time:35,level:'Facile',veg:false,servings:4,
+  ing:[[600,'g','de blanc de poulet'],[40,'cl','de lait de coco'],[1,'','oignon'],[2,'','gousses d\'ail'],[2,'c. à soupe','de pâte de curry ou de curry en poudre'],[1,'c. à soupe','d\'huile'],[250,'g','de riz basmati']],
+  steps:['Coupez le poulet en morceaux et faites-le dorer dans l\'huile avec l\'oignon émincé.','Ajoutez l\'ail et le curry, mélangez 1 minute.','Versez le lait de coco, salez et laissez mijoter 20 minutes.','Faites cuire le riz à part et servez avec le curry.']},
+ {id:'chakchouka',pays:'Tunisie',name:'Chakchouka',emoji:'🍅',cat:'Plat',time:30,level:'Facile',veg:true,servings:4,
+  ing:[[4,'','œufs'],[4,'','tomates mûres'],[2,'','poivrons'],[1,'','oignon'],[2,'','gousses d\'ail'],[1,'c. à café','de cumin'],[1,'c. à café','de paprika'],[3,'c. à soupe','d\'huile d\'olive']],
+  steps:['Faites revenir l\'oignon et les poivrons en lanières dans l\'huile.','Ajoutez l\'ail, les tomates coupées, le cumin, le paprika, le sel et le poivre. Laissez réduire 15 minutes.','Creusez 4 petits puits dans la sauce et cassez un œuf dans chacun.','Couvrez et laissez cuire 5 minutes, jusqu\'à ce que les blancs soient pris. Servez dans la poêle avec du pain.']},
+ {id:'houmous',pays:'Liban',name:'Houmous maison',emoji:'🧆',cat:'Soupe & salade',time:10,level:'Facile',veg:true,servings:4,
+  ing:[[400,'g','de pois chiches cuits'],[3,'c. à soupe','de purée de sésame (tahini)'],[1,'','citron (jus)'],[1,'','gousse d\'ail'],[3,'c. à soupe','d\'huile d\'olive'],[1,'c. à café','de cumin']],
+  steps:['Égouttez les pois chiches en gardant un peu de leur jus.','Mixez-les avec le tahini, le citron, l\'ail, le cumin et le sel.','Ajoutez l\'huile et un peu de jus de pois chiches jusqu\'à obtenir une texture lisse.','Servez avec un filet d\'huile d\'olive, du pain ou des crudités.']},
+ {id:'yaourt',pays:'France',name:'Gâteau au yaourt',emoji:'🍰',cat:'Dessert',time:45,level:'Facile',veg:true,servings:8,
+  ing:[[1,'','pot de yaourt nature'],[2,'','pots de sucre'],[3,'','pots de farine'],[0.5,'','pot d\'huile'],[3,'','œufs'],[1,'','sachet de levure chimique']],
+  steps:['Préchauffez le four à 180 °C et beurrez un moule.','Versez le yaourt dans un saladier. Utilisez le pot vide comme mesure pour le reste.','Mélangez le sucre, les œufs, puis la farine avec la levure, et enfin l\'huile.','Versez dans le moule et enfournez 35 minutes. Vérifiez la cuisson avec la pointe d\'un couteau.']},
+ {id:'tarte',pays:'France',name:'Tarte aux pommes',emoji:'🍎',cat:'Dessert',time:60,level:'Moyen',veg:true,servings:6,
+  ing:[[1,'','pâte brisée sucrée'],[5,'','pommes'],[40,'g','de sucre'],[30,'g','de beurre'],[1,'c. à café','de cannelle'],[3,'c. à soupe','de confiture d\'abricot']],
+  steps:['Préchauffez le four à 180 °C et foncez un moule avec la pâte.','Épluchez les pommes et coupez-les en fines lamelles.','Disposez-les en rosace sur la pâte, parsemez de sucre, de cannelle et de petits morceaux de beurre.','Enfournez 40 minutes. Nappez de confiture d\'abricot tiédie à la sortie du four.']}
+];
+
+const TILE = {'Petit-déjeuner':'var(--t-matin)','Plat':'var(--t-plat)','Soupe & salade':'var(--t-soupe)','Dessert':'var(--t-dessert)','Boisson':'var(--t-matin)'};
+const FILTERS = ['Tout','Petit-déjeuner','Plat','Soupe & salade','Dessert','Boisson','Végétarien','Moins de 30 min'];
+let mine = [];
+try { mine = JSON.parse(localStorage.getItem('mc_recipes') || '[]'); } catch(e) { mine = []; }
+let state = { p:'Tous les pays', q:'', f:'Tout', cur:null, servings:0, done:new Set() };
+const $ = id => document.getElementById(id);
+const all = () => BASE.concat(mine);
+const fmt = n => { const r = Math.round(n*100)/100; return String(r).replace('.',','); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+function show(v){ ['viewList','viewDetail','viewForm'].forEach(x => $(x).classList.toggle('hidden', x!==v)); window.scrollTo(0,0); }
+
+const FLAGS={'Maroc':'🇲🇦','Italie':'🇮🇹','France':'🇫🇷','Tunisie':'🇹🇳','Liban':'🇱🇧','Pérou':'🇵🇪','Inde':'🇮🇳','Turquie':'🇹🇷','Japon':'🇯🇵','Mexique':'🇲🇽','Grèce':'🇬🇷','Espagne':'🇪🇸','Thaïlande':'🇹🇭','États-Unis':'🇺🇸'};
+const PRIO=['Maroc','Italie','France'];
+function paysList(){
+  const set=[...new Set(all().map(r=>r.pays).filter(Boolean))];
+  const rest=set.filter(p=>!PRIO.includes(p)).sort((a,b)=>a.localeCompare(b,'fr'));
+  return PRIO.filter(p=>set.includes(p)).concat(rest);
+}
+function renderChips(){
+  $('chips').innerHTML = FILTERS.map(f => `<button class="chip" aria-pressed="${state.f===f}" data-f="${esc(f)}">${esc(f)}</button>`).join('');
+  $('chips').querySelectorAll('.chip').forEach(b => b.onclick = () => { state.f = b.dataset.f; renderChips(); renderList(); });
+  $('pchips').innerHTML = ['Tous les pays'].concat(paysList()).map(p => `<button class="chip" aria-pressed="${state.p===p}" data-p="${esc(p)}">${FLAGS[p]?FLAGS[p]+' ':''}${esc(p)}</button>`).join('');
+  $('pchips').querySelectorAll('.chip').forEach(b => b.onclick = () => { state.p = b.dataset.p; renderChips(); renderList(); });
+}
+
+function matches(r){
+  const f = state.f;
+  if (state.p!=='Tous les pays' && r.pays!==state.p) return false;
+  if (f==='Végétarien' && !r.veg) return false;
+  if (f==='Moins de 30 min' && r.time>30) return false;
+  if (['Petit-déjeuner','Plat','Soupe & salade','Dessert','Boisson'].includes(f) && r.cat!==f) return false;
+  const q = norm(state.q.trim());
+  if (!q) return true;
+  const hay = norm(r.name+' '+(r.pays||'')+' '+r.ing.map(i=>i[2]).join(' '));
+  return q.split(/\s+/).every(w => hay.includes(w));
+}
+
+function renderList(){
+  const rs = all().filter(matches);
+  $('count').textContent = rs.length + (rs.length>1 ? ' recettes' : ' recette');
+  $('list').innerHTML = rs.length ? rs.map(r => `
+    <button class="row" data-id="${esc(r.id)}">
+      <div class="tile" style="background:${TILE[r.cat]||'var(--t-plat)'}" aria-hidden="true">${r.emoji||'🍽️'}</div>
+      <div><div class="rname">${esc(r.name)}</div><div class="rmeta">${r.pays?(FLAGS[r.pays]||'')+' '+esc(r.pays)+' · ':''}${r.time} min · ${esc(r.level||'Facile')}${r.veg?' · végétarien':''}</div></div>
+      <div class="rcat">${esc(r.cat)}</div>
+    </button>`).join('') : '<p class="empty">Aucune recette ne correspond. Essayez un autre mot ou retirez un filtre.</p>';
+  $('list').querySelectorAll('.row').forEach(b => b.onclick = () => openRecipe(b.dataset.id));
+}
+
+function openRecipe(id){
+  const r = all().find(x => x.id===id); if(!r) return;
+  state.cur = r; state.servings = r.servings || 0; state.done = new Set();
+  renderDetail(); show('viewDetail');
+}
+
+function renderDetail(){
+  const r = state.cur, base = r.servings || 0;
+  const scalable = base > 0;
+  const ings = r.ing.map(i => {
+    if (i[0] === null) return `<li>${esc(i[2])}</li>`;
+    const q = scalable ? i[0]*state.servings/base : i[0];
+    const unit = i[1] ? ' '+esc(i[1]) : '';
+    const sp = (i[1] && /^[aeiouyéèh]/i.test(i[2].replace(/^(de |d')/,'')) ) ? '' : '';
+    return `<li><b>${fmt(q)}${unit}</b> ${esc(i[2])}</li>`;
+  }).join('');
+  $('viewDetail').innerHTML = `
+    <button class="btn ghost back" id="dBack">Toutes les recettes</button>
+    <div class="hero"><div class="tile" style="background:${TILE[r.cat]||'var(--t-plat)'}" aria-hidden="true">${r.emoji||'🍽️'}</div><h2>${esc(r.name)}</h2></div>
+    <p class="facts">${r.pays?(FLAGS[r.pays]||'')+' '+esc(r.pays)+' · ':''}${r.time} min · ${esc(r.level||'Facile')} · ${esc(r.cat)}${r.veg?' · végétarien':''}</p>
+    <div class="cols">
+      <div>
+        <h3>Ingrédients</h3>
+        ${scalable ? `<div class="stepper"><button id="minus" aria-label="Moins de portions">−</button><span id="sv" aria-live="polite">${state.servings} ${state.servings>1?'personnes':'personne'}</span><button id="plus" aria-label="Plus de portions">+</button></div>` : ''}
+        <ul class="ing">${ings}</ul>
+      </div>
+      <div>
+        <h3>Préparation</h3>
+        <ol class="steps">${r.steps.map((s,i)=>`<li data-i="${i}" class="${state.done.has(i)?'done':''}">${esc(s)}</li>`).join('')}</ol>
+        <p class="hint">Touchez une étape pour la cocher.</p>
+      </div>
+    </div>
+    ${r.custom ? '<p style="margin-top:20px"><button class="btn ghost" id="del">Supprimer cette recette</button></p>' : ''}`;
+  $('dBack').onclick = () => show('viewList');
+  if (scalable){
+    $('minus').onclick = () => { if(state.servings>1){ state.servings--; renderDetail(); $('plus').focus(); } };
+    $('plus').onclick = () => { if(state.servings<24){ state.servings++; renderDetail(); $('plus').focus(); } };
+  }
+  $('viewDetail').querySelectorAll('.steps li').forEach(li => li.onclick = () => {
+    const i = +li.dataset.i; state.done.has(i) ? state.done.delete(i) : state.done.add(i); li.classList.toggle('done');
+  });
+  if ($('del')) $('del').onclick = () => {
+    mine = mine.filter(m => m.id !== r.id); persist(); renderList(); show('viewList');
+  };
+}
+
+function persist(){ try { localStorage.setItem('mc_recipes', JSON.stringify(mine)); } catch(e) {} }
+
+function parseIng(line){
+  const m = line.trim().match(/^(\d+(?:[.,]\d+)?)\s*(kg|g|cl|ml|l|c\. à soupe|c\. à café|pincée|poignée)?\s*(?:de |d')?(.*)$/i);
+  if (m && m[3]) return [parseFloat(m[1].replace(',','.')), m[2]||'', m[3].trim()];
+  return [null,'',line.trim()];
+}
+
+$('home').onclick = () => show('viewList');
+$('q').oninput = e => { state.q = e.target.value; renderList(); };
+$('addBtn').onclick = () => { $('formErr').textContent=''; show('viewForm'); $('fName').focus(); };
+$('formBack').onclick = $('cancel').onclick = () => show('viewList');
+$('save').onclick = () => {
+  const name = $('fName').value.trim();
+  const ing = $('fIng').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const steps = $('fSteps').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if (!name || !ing.length || !steps.length){ $('formErr').textContent = 'Ajoutez un nom, au moins un ingrédient et une étape.'; return; }
+  const r = { id:'u'+Date.now(), custom:true, name, pays:$('fPays').value.trim()||'Autre', emoji:'🍽️', cat:$('fCat').value, time:Math.max(1,+$('fTime').value||30), level:'Facile', veg:false, servings:0, ing:ing.map(parseIng), steps };
+  mine.push(r); persist();
+  ['fName','fPays','fIng','fSteps'].forEach(x => $(x).value='');
+  state.q=''; $('q').value=''; state.f='Tout'; state.p='Tous les pays'; renderChips(); renderList(); openRecipe(r.id);
+};
+
+renderChips(); renderList();
+</script>
+</body>
+</html>
